@@ -1,7 +1,5 @@
 venv/*
-database/*
 *.log
-*.db
 *.sqlite
 __pycache__/*
 instance/*
