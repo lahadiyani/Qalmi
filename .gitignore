@@ -9,3 +9,4 @@ instance/*
 arsitektur.txt
 migrations/*
 logs/*
+.agent
