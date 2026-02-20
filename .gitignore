@@ -1,0 +1,13 @@
+venv/*
+database/*
+*.log
+*.db
+*.sqlite
+__pycache__/*
+instance/*
+*.pyc
+.DS_Store
+.env
+arsitektur.txt
+migrations/*
+logs/*

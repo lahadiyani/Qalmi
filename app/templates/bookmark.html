@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookmark — Ruang Refleksi Personal</title>
+  <!-- Tailwind + Fonts + Icons (Font Awesome) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Amiri&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .arabic { font-family: 'Amiri', serif; }
+    .bg-radial-soft { background: radial-gradient(circle at 0% 0%, #E8F5E9 0%, #ffffff 70%); }
+    .dark .bg-radial-soft { background: radial-gradient(circle at 20% 30%, #1a2e23 0%, #0F1A14 80%); }
+    /* animasi fade untuk hapus (demo) */
+    .fade-out { opacity: 0; transform: translateY(-10px); transition: opacity 0.2s, transform 0.2s; }
+  </style>
+</head>
+<body class="bg-radial-soft text-gray-800 dark:text-gray-100 dark:bg-[#0F1A14] transition-colors duration-300">
+
+  <!-- Toast sederhana (untuk demo) -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-5 py-2 rounded-full text-sm z-50 opacity-0 transition-opacity pointer-events-none">Tersimpan</div>
+
+  <!-- Toggle dark mode (sederhana) -->
+  <div class="fixed top-4 right-4 z-50 flex gap-2">
+    <button id="darkToggle" class="glass px-4 py-2 rounded-full shadow-md backdrop-blur-md bg-white/30 dark:bg-black/30 border border-white/20 text-sm"><i class="fas fa-moon mr-1"></i> gelap</button>
+  </div>
+
+  <!-- LAYOUT GRID: 3 KOLOM (SIDEBAR, MAIN, RIGHT PANEL) -->
+  <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr_360px] min-h-screen">
+    
+    <!-- ========== LEFT SIDEBAR (PRIMARY NAV) ========= -->
+    <aside class="sticky top-0 h-screen bg-white/70 dark:bg-[rgba(20,30,25,0.6)] backdrop-blur-xl border-r border-black/5 dark:border-white/5 flex flex-col p-5 overflow-y-auto">
+      <!-- Brand -->
+      <div class="flex items-center gap-2 mb-8">
+        <div class="w-8 h-8 bg-green-600/20 rounded-xl flex items-center justify-center"><i class="fas fa-quran text-green-700 dark:text-green-400"></i></div>
+        <span class="font-semibold text-lg">Qur’an Reader</span>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="space-y-1">
+        <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-gray-600 dark:text-gray-300"><i class="fas fa-compass w-5 text-green-600 dark:text-green-400"></i>Explore</a>
+        <a href="#" class="flex items-center gap-3 p-3 rounded-xl bg-[#C8E6C9] dark:bg-[#2E7D32]/30 border-l-4 border-[#2E7D32] dark:border-green-400 font-medium"><i class="fas fa-bookmark w-5 text-green-700 dark:text-green-300"></i>Bookmark</a>
+        <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-gray-600 dark:text-gray-300"><i class="fas fa-moon w-5 text-green-600 dark:text-green-400"></i>Mode Hafalan</a>
+        <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-gray-600 dark:text-gray-300"><i class="fas fa-sliders-h w-5 text-green-600 dark:text-green-400"></i>Settings</a>
+      </nav>
+
+      <!-- Menu bawah -->
+      <div class="mt-auto pt-6 border-t border-black/5 dark:border-white/5">
+        <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-gray-600 dark:text-gray-300"><i class="fas fa-info-circle w-5 text-green-600"></i>Tentang</a>
+      </div>
+    </aside>
+
+    <!-- ========== MAIN CONTENT (BOOKMARK VIEW) ========= -->
+    <main class="overflow-y-auto h-screen px-4 md:px-8 py-8 max-w-5xl mx-auto w-full">
+      <!-- Header -->
+      <div class="mb-10">
+        <h1 class="text-4xl md:text-5xl font-semibold tracking-tight mb-2 flex items-center gap-3">
+          📌 Bookmark
+          <span class="text-sm font-normal bg-white/40 dark:bg-white/10 backdrop-blur-sm text-green-700 dark:text-green-300 px-4 py-1.5 rounded-full border border-green-200/50 dark:border-green-800/50">12 ayat tersimpan</span>
+        </h1>
+        <p class="text-gray-500 dark:text-gray-400 text-base max-w-xl">Ayat yang kamu simpan untuk direnungkan kembali.</p>
+      </div>
+
+      <!-- Filter & Search Bar -->
+      <div class="flex flex-wrap gap-3 mb-12">
+        <div class="flex-1 min-w-[240px] flex items-center bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 rounded-full px-5 py-3 text-sm">
+          <i class="fas fa-search text-green-600 dark:text-green-400 mr-3"></i>
+          <input type="text" placeholder="Cari ayat tersimpan..." class="w-full bg-transparent outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500">
+        </div>
+        <div class="flex gap-2">
+          <div class="relative">
+            <select class="appearance-none bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 rounded-full px-5 py-3 pr-10 text-sm text-gray-700 dark:text-gray-300 outline-none cursor-pointer">
+              <option>Semua Surah</option>
+              <option>Al-Fatihah</option>
+              <option>Al-Baqarah</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+          </div>
+          <div class="relative">
+            <select class="appearance-none bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 rounded-full px-5 py-3 pr-10 text-sm text-gray-700 dark:text-gray-300 outline-none cursor-pointer">
+              <option>Terbaru</option>
+              <option>Berdasarkan Surah</option>
+              <option>Berdasarkan Nomor</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daftar Bookmark (Grouped View) -->
+      <div class="space-y-10">
+        <!-- Group Al-Fatihah -->
+        <div>
+          <div class="sticky top-0 z-10 backdrop-blur-md bg-white/30 dark:bg-[#0F1A14]/70 py-2 mb-4 flex items-center gap-3">
+            <h2 class="text-xl font-semibold">Al-Fatihah</h2>
+            <div class="h-px flex-1 bg-gradient-to-r from-green-200/50 to-transparent dark:from-green-800/50"></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Card 1: Ayat 1 -->
+            <div class="bookmark-card group bg-white/65 dark:bg-[rgba(20,30,25,0.6)] backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-6 transition-all duration-200 hover:translate-y-[-3px] hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-green-900/20">
+              <div class="flex justify-between items-start mb-3">
+                <span class="text-xs text-gray-500 dark:text-gray-400 bg-white/20 dark:bg-black/20 px-3 py-1 rounded-full">Disimpan 2 hari lalu</span>
+                <button class="text-gray-400 hover:text-red-500 transition delete-btn" data-id="1"><i class="fas fa-trash-alt"></i></button>
+              </div>
+              <div class="mb-3">
+                <span class="text-sm font-medium text-green-700 dark:text-green-400">Al-Fatihah · 1:1</span>
+              </div>
+              <div class="arabic text-3xl md:text-4xl text-right leading-relaxed mb-3 text-gray-800 dark:text-[#F5F5F5]" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.</div>
+              <!-- Notes preview -->
+              <div class="text-xs text-gray-500 dark:text-gray-400 italic mb-4 border-l-2 border-green-300 pl-3">“Rahmat Allah selalu menyertai setiap langkah.”</div>
+              <div class="flex gap-4 text-sm text-gray-400 dark:text-gray-500">
+                <button class="hover:text-green-600 dark:hover:text-green-400"><i class="fas fa-book-open"></i> <span class="hidden md:inline ml-1">Buka</span></button>
+                <button class="hover:text-green-600 dark:hover:text-green-400"><i class="fas fa-play"></i> <span class="hidden md:inline ml-1">Putar</span></button>
+              </div>
+            </div>
+
+            <!-- Card 2: Ayat 2 (tanpa notes) -->
+            <div class="bookmark-card group bg-white/65 dark:bg-[rgba(20,30,25,0.6)] backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-6 transition-all duration-200 hover:translate-y-[-3px] hover:shadow-xl">
+              <div class="flex justify-between items-start mb-3">
+                <span class="text-xs text-gray-500 dark:text-gray-400 bg-white/20 dark:bg-black/20 px-3 py-1 rounded-full">Disimpan 5 hari lalu</span>
+                <button class="text-gray-400 hover:text-red-500 transition delete-btn"><i class="fas fa-trash-alt"></i></button>
+              </div>
+              <div class="mb-3">
+                <span class="text-sm font-medium text-green-700 dark:text-green-400">Al-Fatihah · 1:2</span>
+              </div>
+              <div class="arabic text-3xl md:text-4xl text-right leading-relaxed mb-3 text-gray-800 dark:text-[#F5F5F5]" dir="rtl">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">Segala puji bagi Allah, Tuhan seluruh alam.</div>
+              <div class="flex gap-4 text-sm text-gray-400 dark:text-gray-500">
+                <button class="hover:text-green-600 dark:hover:text-green-400"><i class="fas fa-book-open"></i> Buka</button>
+                <button class="hover:text-green-600 dark:hover:text-green-400"><i class="fas fa-play"></i> Putar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group Al-Baqarah -->
+        <div>
+          <div class="sticky top-0 z-10 backdrop-blur-md bg-white/30 dark:bg-[#0F1A14]/70 py-2 mb-4 flex items-center gap-3">
+            <h2 class="text-xl font-semibold">Al-Baqarah</h2>
+            <div class="h-px flex-1 bg-gradient-to-r from-green-200/50 to-transparent dark:from-green-800/50"></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Card 3: Ayat 255 (Ayat Kursi) -->
+            <div class="bookmark-card group bg-white/65 dark:bg-[rgba(20,30,25,0.6)] backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-6 transition-all duration-200 hover:translate-y-[-3px]">
+              <div class="flex justify-between items-start mb-3">
+                <span class="text-xs text-gray-500 dark:text-gray-400 bg-white/20 dark:bg-black/20 px-3 py-1 rounded-full">Disimpan 1 minggu lalu</span>
+                <button class="text-gray-400 hover:text-red-500 transition delete-btn"><i class="fas fa-trash-alt"></i></button>
+              </div>
+              <div class="mb-3">
+                <span class="text-sm font-medium text-green-700 dark:text-green-400">Al-Baqarah · 2:255</span>
+              </div>
+              <div class="arabic text-2xl md:text-3xl text-right leading-relaxed mb-3 text-gray-800 dark:text-[#F5F5F5]" dir="rtl">اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ...</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">Allah, tidak ada Tuhan selain Dia, Yang Maha Hidup lagi Maha Berdiri Sendiri...</div>
+              <div class="flex gap-4 text-sm text-gray-400 dark:text-gray-500">
+                <button class="hover:text-green-600 dark:hover:text-green-400"><i class="fas fa-book-open"></i> Buka</button>
+                <button class="hover:text-green-600 dark:hover:text-green-400"><i class="fas fa-play"></i> Putar</button>
+              </div>
+            </div>
+            <!-- Card 4: Ayat 286 -->
+            <div class="bookmark-card group bg-white/65 dark:bg-[rgba(20,30,25,0.6)] backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-6 transition-all duration-200 hover:translate-y-[-3px]">
+              <div class="flex justify-between items-start mb-3">
+                <span class="text-xs text-gray-500 dark:text-gray-400 bg-white/20 dark:bg-black/20 px-3 py-1 rounded-full">Disimpan 3 hari lalu</span>
+                <button class="text-gray-400 hover:text-red-500 transition delete-btn"><i class="fas fa-trash-alt"></i></button>
+              </div>
+              <div class="mb-3">
+                <span class="text-sm font-medium text-green-700 dark:text-green-400">Al-Baqarah · 2:286</span>
+              </div>
+              <div class="arabic text-2xl md:text-3xl text-right leading-relaxed mb-3 text-gray-800 dark:text-[#F5F5F5]" dir="rtl">لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا...</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">Allah tidak membebani seseorang melainkan sesuai kesanggupannya...</div>
+              <div class="flex gap-4 text-sm text-gray-400 dark:text-gray-500">
+                <button class="hover:text-green-600 dark:hover:text-green-400"><i class="fas fa-book-open"></i> Buka</button>
+                <button class="hover:text-green-600 dark:hover:text-green-400"><i class="fas fa-play"></i> Putar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State (tersembunyi, hanya contoh) -->
+      <div class="hidden text-center py-20">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-white/30 dark:bg-white/5 backdrop-blur-xl rounded-full mb-6">
+          <i class="fas fa-bookmark text-3xl text-green-600/50 dark:text-green-400/50"></i>
+        </div>
+        <h3 class="text-2xl font-medium mb-2">Belum ada ayat tersimpan</h3>
+        <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">Simpan ayat yang menyentuh hati untuk membacanya kembali di kemudian hari.</p>
+        <button class="bg-white/60 dark:bg-white/10 backdrop-blur-sm border border-gray-200/50 dark:border-white/10 rounded-full px-8 py-3 text-sm font-medium hover:bg-white/80 dark:hover:bg-white/20 transition"><i class="fas fa-compass mr-2"></i> Mulai Membaca</button>
+      </div>
+    </main>
+
+    <!-- ========== RIGHT PANEL (CONTEXTUAL) ========= -->
+    <aside class="sticky top-0 h-screen bg-white/75 dark:bg-[rgba(20,30,25,0.7)] backdrop-blur-2xl border-l border-black/5 dark:border-white/5 w-[360px] p-5 overflow-y-auto hidden lg:block">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="font-medium flex items-center gap-2"><i class="fas fa-pen text-green-600 dark:text-green-400"></i> Catatan Pribadi</h3>
+        <button class="w-7 h-7 rounded-full hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center lg:hidden"><i class="fas fa-times"></i></button>
+      </div>
+      <!-- Contoh catatan untuk ayat aktif -->
+      <div class="mb-4 p-3 bg-white/20 dark:bg-black/20 rounded-xl">
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Al-Fatihah · 1:1</p>
+        <p class="text-sm italic">“Bismillah sebagai pengingat bahwa setiap langkah harus dimulai dengan nama-Nya.”</p>
+        <span class="text-xs text-gray-400 mt-2 block">Disimpan 2 hari lalu</span>
+      </div>
+      <textarea placeholder="Tulis refleksimu di sini..." class="w-full p-3 bg-white/40 dark:bg-black/30 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-white/10 text-sm" rows="5">Bismillah… selalu mengawali dengan asma-Nya membawa ketenangan.</textarea>
+      <button class="mt-3 w-full bg-green-600/80 hover:bg-green-700 text-white rounded-full py-2 text-sm transition">Simpan Catatan</button>
+
+      <!-- Statistik kecil -->
+      <div class="mt-8 pt-6 border-t border-black/5 dark:border-white/5">
+        <h4 class="text-sm font-medium mb-3 flex items-center gap-2"><i class="fas fa-chart-simple text-green-600"></i> Sekilas Info</h4>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-white/30 dark:bg-white/5 backdrop-blur-sm rounded-xl p-3 text-center">
+            <div class="text-xl font-semibold">12</div>
+            <div class="text-xs text-gray-500">Ayat</div>
+          </div>
+          <div class="bg-white/30 dark:bg-white/5 backdrop-blur-sm rounded-xl p-3 text-center">
+            <div class="text-xl font-semibold">5</div>
+            <div class="text-xs text-gray-500">Surah</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Simple JavaScript untuk dark mode & demo hapus -->
+  <script>
+    (function() {
+      // Dark mode toggle
+      const darkToggle = document.getElementById('darkToggle');
+      const html = document.documentElement;
+      darkToggle.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        darkToggle.innerHTML = html.classList.contains('dark') ? '<i class="fas fa-sun mr-1"></i> terang' : '<i class="fas fa-moon mr-1"></i> gelap';
+      });
+
+      // Demo: hapus card dengan animasi fade (hanya untuk yang memiliki class delete-btn)
+      const deleteBtns = document.querySelectorAll('.delete-btn');
+      const toast = document.getElementById('toast');
+      deleteBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const card = this.closest('.bookmark-card');
+          if (card) {
+            card.classList.add('fade-out');
+            setTimeout(() => {
+              card.style.display = 'none';
+              toast.style.opacity = '1';
+              toast.textContent = 'Ayat dihapus dari bookmark';
+              setTimeout(() => { toast.style.opacity = '0'; }, 1500);
+            }, 200);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
